@@ -13,8 +13,49 @@
 
 (defun edge-pair (a b)
   (unless (eql a b)
-    (list (cons a b) (ccons b a))))
+    (list (cons a b) (cons b a))))
 
+; Create a list of *edge-num* randomly generated edges
 (defun make-edge-list ()
   (apply #'append (loop repeat *edge-num*
                         collect (edge-pair (random-node) (random-node)))))
+
+;; ============================================================================
+;;                             Removing Islands
+;; ============================================================================
+; Find all edges in edge-list that begin at node
+(defun direct-edges (node edge-list)
+  (remove-if-not (lambda (x)
+                   (eql (car x) node))
+                 edge-list))
+
+; Finds all nodes reachable from node with a dfs
+(defun get-connnected (node edge-list)
+  (let ((visited nil))
+    (labels ((traverse (node)
+                       (unless (member node visited)
+                         (push node visited)
+                         (mapc (lambda (edge)
+                                 (traverse (cdr edge)))
+                               (direct-edges node edge-list)))))
+      (traverse node))
+    visited))
+
+(defun find-islands (nodes edge-list)
+  (let ((islands nil))
+    (labels ((find-island (nodes)
+                          (let* ((connected (get-connnected (car nodes) edge-list))
+                                 (unconnected (set-difference nodes connected)))
+                            (push connected islands)
+                            (when unconnected
+                              (find-island unconnected)))))
+      (find-island nodes))
+    islands))
+
+(defun connnect-with-bridges (islands)
+  (when (cdr islands)
+    (append (edge-pair (caar islands) (cadr islands))
+            (connect-with-bridges (cdr islands)))))
+
+(defun connect-all-islands (nodes edge-list)
+  (append (connect-with-bridges (find-islands nodes edge-list)) edge-list))
