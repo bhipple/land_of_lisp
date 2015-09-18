@@ -195,10 +195,10 @@
     (pushnew pos *visited-nodes*)
     (setf *player-pos* pos)
     (draw-known-city)
-    (cond ((member 'cops edge) (princ "You ran into the cops. Game Over."))
+    (cond ((member 'cops edge) (princ "You ran into the cops. Game over."))
           ((member 'wumpus node) (if charging
-                                   (princ "You found the Wumpus!")
-                                   (princ "You ran into the Wumpus")))
+                                   (princ "You found the Wumpus! You win!")
+                                   (princ "You ran into the Wumpus. Game over.")))
           (charging (princ "You wasted your last bullet.  Game over."))
           (has-worm (let ((new-pos (random-node)))
                       (princ "You ran into a Glow Worm Gang! You're now at ")
