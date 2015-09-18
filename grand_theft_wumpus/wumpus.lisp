@@ -195,7 +195,7 @@
     (pushnew pos *visited-nodes*)
     (setf *player-pos* pos)
     (draw-known-city)
-    (cond ((member 'cops edge) (prince "You ran into the cops. Game Over."))
+    (cond ((member 'cops edge) (princ "You ran into the cops. Game Over."))
           ((member 'wumpus node) (if charging
                                    (princ "You found the Wumpus!")
                                    (princ "You ran into the Wumpus")))
