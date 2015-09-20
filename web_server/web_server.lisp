@@ -76,3 +76,6 @@
         (princ "<html><form>What is your name?<input name='name' /></form></html>")
         (format t "<html>Nice to meet you, ~a!</html>" (cdr name))))
     (princ "Sorry... I don't know that page.")))
+
+; Start up the web server with:
+; (serve #'hello-request-handler)
