@@ -85,23 +85,32 @@
 ;; ============================================================================
 (defun dod-request-handler (path header params)
   (if (equal path "game.html")
-    (progn (princ "<!doctype html>")
-           (tag center ()
-                (princ "Welcome to DICE OF DOOM!")
-                (tag br ())
-                (let ((chosen (assoc 'chosen params)))
-                  (when (or (not *cur-game-tree*) (not chosen))
-                    (setf chosen nil)
-                    (web-initialize))
-                  (cond ((lazy-null (caddr *cur-game-tree*))
-                         (web-announce-winner (cadr *cur-game-tree*)))
-                        ((zerop (car *cur-game-tree*))
-                         (web-handle-human
-                           (when chosen
-                             (read-from-string (cdr chosen)))))
-                        (t (web-handle-computer))))
-                (tag br ())
-                (draw-dod-page *cur-game-tree* *from-tile*)))
+    (progn
+      ;(princ "HTTP/1.0 200 OK")
+      (princ "")
+      (princ "<!DOCTYPE html>")
+      (tag html (lang "en")
+           (tag head ()
+                (tag meta (http-equiv "Content-Type" content "text/html; charset=UTF-8"))
+                )
+           (tag body ()
+                (tag center ()
+                     (princ "Welcome to DICE OF DOOM!")
+                     (tag br ())
+                     (let ((chosen (assoc 'chosen params)))
+                       (when (or (not *cur-game-tree*) (not chosen))
+                         (setf chosen nil)
+                         (web-initialize))
+                       (cond ((lazy-null (caddr *cur-game-tree*))
+                              (web-announce-winner (cadr *cur-game-tree*)))
+                             ((zerop (car *cur-game-tree*))
+                              (web-handle-human
+                                (when chosen
+                                  (read-from-string (cdr chosen)))))
+                             (t (web-handle-computer))))
+                     (tag br ())
+                     (draw-dod-page *cur-game-tree* *from-tile*)))
+           ))
     (princ "Sorry... I don't know that page.")))
 
 (defun web-initialize ()
@@ -131,16 +140,16 @@
         (t (setf *cur-game-tree*
                  (cadr (lazy-find-if (lambda (move)
                                        (equal (car move)
-                                              (lisst *from-tile* pos)))
+                                              (list *from-tile* pos)))
                                      (caddr *cur-game-tree*))))
            (setf *from-tile* nil)
            (princ "You may now ")
            (tag a (href (make-game-link 'pass))
-                (prince "pass"))
+                (princ "pass"))
            (princ " or make another move:"))))
 
 (defun web-handle-computer ()
-  (setf *cur-game-tree* (handle-commputer *cur-game-tree*))
+  (setf *cur-game-tree* (handle-computer *cur-game-tree*))
   (princ "The computer has moved. ")
   (tag script ()
        (princ
@@ -159,3 +168,7 @@
                                          (cadar move)))
                                      (caddr tree))
                                    (lazy-mapcar #'caar (caddr tree)))))))
+
+
+; Main method to start the server
+(serve #'dod-request-handler)

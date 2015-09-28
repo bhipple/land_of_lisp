@@ -34,9 +34,11 @@
   `(tag body ()
         ,@body))
 
-(defmacro svg (&body body)
+(defmacro svg (width height &body body)
   `(tag svg (xmlns "http://www.w3.org/2000/svg"
-                   "xmlns:xlink" "http://www.w3.org/1999/xlink")
+                   "xmlns:xlink" "http://www.w3.org/1999/xlink"
+                   height ,height
+                   width ,width)
         ,@body))
 
 ;; ============================================================================
@@ -93,16 +95,3 @@
                          (1- value)
                          (1+ value))
                        (1- length)))))
-
-(defun generate-random-walk-graph ()
-  (with-open-file (*standard-output* "random_walk.svg"
-                                     :direction :output
-                                     :if-exists :supersede)
-    (svg (loop repeat 10
-               do (polygon (append '((0 . 200))
-                                   (loop for x
-                                         for y in (random-walk 100 400)
-                                         collect (cons x y))
-                                   '((400 . 200)))
-                           (loop repeat 3
-                                 collect (random 256)))))))
