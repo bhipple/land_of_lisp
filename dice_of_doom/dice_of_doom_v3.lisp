@@ -166,7 +166,3 @@
                                          (cadar move)))
                                      (caddr tree))
                                    (lazy-mapcar #'caar (caddr tree)))))))
-
-
-; Main method to start the server
-(serve #'dod-request-handler)
