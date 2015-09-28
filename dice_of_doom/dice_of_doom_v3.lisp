@@ -86,9 +86,7 @@
 (defun dod-request-handler (path header params)
   (if (equal path "game.html")
     (progn
-      ;(princ "HTTP/1.0 200 OK")
-      (princ "")
-      (princ "<!DOCTYPE html>")
+      (format t "HTTP/1.0 200 OK~2%<!doctype html>")
       (tag html (lang "en")
            (tag head ()
                 (tag meta (http-equiv "Content-Type" content "text/html; charset=UTF-8"))
